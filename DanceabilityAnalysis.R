@@ -25,9 +25,7 @@ spotifyTracks <- cleanDataset[,!names(cleanDataset) %in% c("artists.y", "popular
 colnames(spotifyTracks)[colnames(spotifyTracks) == "track_genre....................................."] ="track_genre"
 
 
-
-
-#Graphique 1 : Évolution de la danceabiity en fonction des années de 1921 à 2020
+#Graphique 1 : Évolution de la danceability en fonction des années de 1921 à 2020
 
 #on garde danceability & year
 dataFrame2 <- subset(spotifyTracks, select=c(year, danceability.x)) %>% group_by(year) %>% arrange(year)
@@ -113,4 +111,17 @@ top5Y90 = cbind(top5Y90, colors2)
 #colnames(top5Y90)[colnames(top5Y90) == "...3"] ="colors2"
 
 ggplot(top5Y90, aes(x=reorder(track_genre, -n), y=n, group=1)) + geom_bar(position="dodge",  stat="identity", color ="aliceblue", fill=colors2) + ylab("Pourcentage de musiques écoutées") + xlab("track genre")
+
+# Graphe 5 : la danceability du top 25 des chansons sur Spotify
+
+top25dance = (group_by(spotifyTracks, danceability) %>% summarise(popularity) %>% arrange(-popularity))
+top25dance=head(top25dance,25)
+ggplot(top25dance, aes(danceability, popularity)) + geom_point(position='jitter')
+
+# Graphes 6 à 8 : Les facteurs qui influencent le plus sur la danceability
+
+factors=(group_by(spotifyTracks, danceability))
+ggplot(factors, aes(energy, danceability)) +geom_density_2d_filled(alpha=0.5) + geom_smooth(color='black')
+ggplot(factors, aes(valence, danceability)) +geom_density_2d_filled(alpha=0.5) + geom_smooth(color='black')
+ggplot(factors, aes(tempo, danceability)) +geom_density_2d_filled(alpha=0.5) + geom_smooth(color='black')
 
